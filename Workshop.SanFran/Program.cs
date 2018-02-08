@@ -1,4 +1,5 @@
-﻿using Raven.Client.Documents;
+﻿using Orders;
+using Raven.Client.Documents;
 using System;
 
 namespace Workshop.SanFran
@@ -20,7 +21,7 @@ namespace Workshop.SanFran
 
                 using (var session = store.OpenSession())
                 {
-                    var nancy = session.Load<dynamic>("employees/1-A");
+                    var nancy = session.Load<Employee>("employees/1-A");
                     Console.WriteLine(nancy.FirstName + " " + nancy.LastName);
                 }
             }
