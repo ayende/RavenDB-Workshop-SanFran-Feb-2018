@@ -33,7 +33,16 @@ namespace Workshop.SanFran
                         ProductName = "Milk",
                         Quantity = 3
                     };
+                    /*
 
+// migration script
+
+from Employees 
+update {
+    this.Name = this.FirstName + " " + this.LastName;
+    delete this.FirstName;
+    delete this.LastName;
+}*/
                     session.Advanced.Defer(new PatchCommandData("orders/830-A", null, new Raven.Client.Documents.Operations.PatchRequest
                     {
                         Script = @"
