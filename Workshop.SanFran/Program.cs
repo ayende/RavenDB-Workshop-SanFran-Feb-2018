@@ -28,15 +28,18 @@ namespace Workshop.SanFran
 
                 using (var session = store.OpenSession())
                 {
-                    var emps = session.Advanced.RawQuery<Employee>("from Employees where Address.City = $city")
-                        .AddParameter("$city", "London")
-                        .Statistics(out var stats)
-                        .Take(2)
-                        .ToList();
+                    var totals = from o in session.Query<Order>()
+                               group o by o.ShipTo.Country into g
+                               select new
+                               {
+                                   Country = g.Key,
+                                   Count = g.Count()
+                               };
 
-                    foreach (var item in emps)
+
+                    foreach (var item in totals)
                     {
-                        Console.WriteLine(item.LastName);
+                        Console.WriteLine(item);
                     }
                 }
             }
