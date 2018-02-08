@@ -1,6 +1,6 @@
-﻿using Orders;
+﻿using System;
 using Raven.Client.Documents;
-using System;
+using Workshop.SanFran.Orders;
 
 namespace Workshop.SanFran
 {

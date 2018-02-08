@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Orders
+namespace Workshop.SanFran.Orders
 {
     public class Company
     {
