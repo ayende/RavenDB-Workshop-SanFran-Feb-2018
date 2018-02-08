@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Commands.Batches;
 using Workshop.SanFran.Orders;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Workshop.SanFran
 {
@@ -15,51 +17,27 @@ namespace Workshop.SanFran
                 Database = "Bio",
                 Urls = new[] 
                 {
-                    "http://localhost:8080"
-                }
+                    "https://a.worksop.dbs.local.ravendb.net",
+                    "https://b.worksop.dbs.local.ravendb.net",
+                    "https://c.worksop.dbs.local.ravendb.net",
+                },
+                Certificate = new X509Certificate2(@"C:\Users\ayende\Downloads\admin.client.certificate.worksop.pfx")
             })
             {
                 store.Initialize();
 
                 using (var session = store.OpenSession())
                 {
-                    session.Advanced.UseOptimisticConcurrency = true;
+                    var emps2 = session.Query<Employee>().Where(x => x.FirstName == "Nancy").ToList();
 
-                    var line = new OrderLine
+                    var emps = session.Advanced.RawQuery<Employee>("from Employees where Address.City = $city")
+                        .AddParameter("$city", "London")
+                        .ToList();
+
+                    foreach (var item in emps)
                     {
-                        Product = "products/1-A",
-                        Discount = 0,
-                        PricePerUnit = 3,
-                        ProductName = "Milk",
-                        Quantity = 3
-                    };
-                    /*
-
-// migration script
-
-from Employees 
-update {
-    this.Name = this.FirstName + " " + this.LastName;
-    delete this.FirstName;
-    delete this.LastName;
-}*/
-                    session.Advanced.Defer(new PatchCommandData("orders/830-A", null, new Raven.Client.Documents.Operations.PatchRequest
-                    {
-                        Script = @"
-for(var i = 0;  i < this.Lines.length; i ++ )
-{
-    if(this.Lines[i].Product == $line.Product)
-    {
-        this.Lines[i].Quantity += $line.Quantity;
-        return;
-    }
-}
-this.Lines.push($line);
-",
-                        Values = {["line"] = line}
-                    }, patchIfMissing: null));
-
-                    session.SaveChanges();
+                        Console.WriteLine(item.LastName);
+                    }
                 }
             }
         }
