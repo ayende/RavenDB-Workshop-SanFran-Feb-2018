@@ -28,10 +28,10 @@ namespace Workshop.SanFran
 
                 using (var session = store.OpenSession())
                 {
-                    var emps2 = session.Query<Employee>().Where(x => x.FirstName == "Nancy").ToList();
-
                     var emps = session.Advanced.RawQuery<Employee>("from Employees where Address.City = $city")
                         .AddParameter("$city", "London")
+                        .Statistics(out var stats)
+                        .Take(2)
                         .ToList();
 
                     foreach (var item in emps)
